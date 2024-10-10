@@ -1,19 +1,57 @@
 #include <gtk/gtk.h>
 #include <string.h>
 
-#define BUTTON_AMOUNT 20
+#define BUTTON_AMOUNT 24
 #define CLEAR_SCREEN "AC"
 #define LEFT_BRACKET "("
 #define RIGHT_BRACKET ")"
 #define MOD "mod"
 #define PI "π"
+#define SEVEN "7"
+#define EIGHT "8"
+#define NINE "9"
+#define DIVIDE "÷"
+#define ROOT "√"
+#define FOUR "4"
+#define FIVE "5"
+#define SIX "6"
+#define MULTIPLY "x"
+#define SQUARE "²"
+#define ONE "1"
+#define TWO "2"
+#define THREE "3"
+#define MINUS "-"
+#define ZERO "0"
+#define PERIOD "."
+#define PERCENT "%"
+#define PLUS "+"
+#define EQUALS "="
 
 enum positions {
   CLEAR_SCREEN_POS,
   LEFT_BRACKET_POS,
   RIGHT_BRACKET_POS,
   MOD_POS,
-  PI_POS
+  PI_POS,
+  SEVEN_POS,
+  EIGHT_POS,
+  NINE_POS,
+  DIVIDE_POS,
+  ROOT_POS,
+  FOUR_POS,
+  FIVE_POS,
+  SIX_POS,
+  MULTIPLY_POS,
+  SQUARE_POS,
+  ONE_POS,
+  TWO_POS,
+  THREE_POS,
+  MINUS_POS,
+  ZERO_POS,
+  PEROID_POS,
+  PERCENT_POS,
+  PLUS_POS,
+  EQUALS_POS
 };
 
 typedef struct {
@@ -48,6 +86,13 @@ void print_string(GtkButton *button, gpointer data) {
   gtk_label_set_text(params->label, display_string);
 }
 
+void initialize_button(GtkWidget **buttons, button_params **button_properties, int pos, int width, int height, int x, int y, GtkWidget *grid) {
+  buttons[pos] = gtk_button_new_with_label(button_properties[pos]->operation);
+  gtk_widget_set_size_request(buttons[pos], width, height);
+  g_signal_connect(buttons[pos], "clicked", G_CALLBACK(print_string), button_properties[pos]);
+  gtk_grid_attach(GTK_GRID(grid), buttons[pos], x, y, width, height);
+}
+
 void on_window_closed(GtkWindow *window, gpointer data) {
   g_free(data);
 }
@@ -67,46 +112,65 @@ void activate(GtkApplication *app, gpointer user_data) {
   strcpy(button_properties[RIGHT_BRACKET_POS]->operation, RIGHT_BRACKET);
   strcpy(button_properties[MOD_POS]->operation, MOD);
   strcpy(button_properties[PI_POS]->operation, PI);
+  strcpy(button_properties[SEVEN_POS]->operation, SEVEN);
+  strcpy(button_properties[EIGHT_POS]->operation, EIGHT);
+  strcpy(button_properties[NINE_POS]->operation, NINE);
+  strcpy(button_properties[DIVIDE_POS]->operation, DIVIDE);
+  strcpy(button_properties[ROOT_POS]->operation, ROOT);
+  strcpy(button_properties[FOUR_POS]->operation, FOUR);
+  strcpy(button_properties[FIVE_POS]->operation, FIVE);
+  strcpy(button_properties[SIX_POS]->operation, SIX);
+  strcpy(button_properties[MULTIPLY_POS]->operation, MULTIPLY);
+  strcpy(button_properties[SQUARE_POS]->operation, SQUARE);
+  strcpy(button_properties[ONE_POS]->operation, ONE);
+  strcpy(button_properties[TWO_POS]->operation, TWO);
+  strcpy(button_properties[THREE_POS]->operation, THREE);
+  strcpy(button_properties[MINUS_POS]->operation, MINUS);
+  strcpy(button_properties[ZERO_POS]->operation, ZERO);
+  strcpy(button_properties[PEROID_POS]->operation, PERIOD);
+  strcpy(button_properties[PERCENT_POS]->operation, PERCENT);
+  strcpy(button_properties[PLUS_POS]->operation, PLUS);
+  strcpy(button_properties[EQUALS_POS]->operation, EQUALS);
 
   window = gtk_application_window_new(app);
   gtk_window_set_title(GTK_WINDOW(window), "Calculator");
-  gtk_window_set_default_size(GTK_WINDOW(window), 500, 500);
+  gtk_window_set_default_size(GTK_WINDOW(window), 500, 700);
 
   grid = gtk_grid_new();
   gtk_grid_set_column_homogeneous(GTK_GRID(grid), FALSE);
   gtk_grid_set_row_homogeneous(GTK_GRID(grid), FALSE);
 
   label = gtk_label_new("");
-  gtk_widget_set_size_request(label, 500, 300);
-  gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 500, 100);
+  gtk_widget_set_size_request(label, 500, 200);
+  gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 500, 200);
 
   for (int i = 0; i < BUTTON_AMOUNT; ++i)
       button_properties[i]->label = GTK_LABEL(label);
-
-  buttons[CLEAR_SCREEN_POS] = gtk_button_new_with_label(CLEAR_SCREEN);
-  gtk_widget_set_size_request(buttons[CLEAR_SCREEN_POS], 100, 100);
-  g_signal_connect(buttons[CLEAR_SCREEN_POS], "clicked", G_CALLBACK(print_string), button_properties[CLEAR_SCREEN_POS]);
-  gtk_grid_attach(GTK_GRID(grid), buttons[CLEAR_SCREEN_POS], 0, 100, 100, 100);
-
-  buttons[LEFT_BRACKET_POS] = gtk_button_new_with_label(LEFT_BRACKET);
-  gtk_widget_set_size_request(buttons[LEFT_BRACKET_POS], 100, 100);
-  g_signal_connect(buttons[LEFT_BRACKET_POS], "clicked", G_CALLBACK(print_string), button_properties[LEFT_BRACKET_POS]);
-  gtk_grid_attach(GTK_GRID(grid), buttons[LEFT_BRACKET_POS], 100, 100, 100, 100);
-
-  buttons[RIGHT_BRACKET_POS] = gtk_button_new_with_label(RIGHT_BRACKET);
-  gtk_widget_set_size_request(buttons[RIGHT_BRACKET_POS], 100, 100);
-  g_signal_connect(buttons[RIGHT_BRACKET_POS], "clicked", G_CALLBACK(print_string), button_properties[RIGHT_BRACKET_POS]);
-  gtk_grid_attach(GTK_GRID(grid), buttons[RIGHT_BRACKET_POS], 200, 100, 100, 100);
-
-  buttons[MOD_POS] = gtk_button_new_with_label(MOD);
-  gtk_widget_set_size_request(buttons[MOD_POS], 100, 100);
-  g_signal_connect(buttons[MOD_POS], "clicked", G_CALLBACK(print_string), button_properties[MOD_POS]);
-  gtk_grid_attach(GTK_GRID(grid), buttons[MOD_POS], 300, 100, 100, 100);
-
-  buttons[PI_POS] = gtk_button_new_with_label(PI);
-  gtk_widget_set_size_request(buttons[PI_POS], 100, 100);
-  g_signal_connect(buttons[PI_POS], "clicked", G_CALLBACK(print_string), button_properties[PI_POS]);
-  gtk_grid_attach(GTK_GRID(grid), buttons[PI_POS], 400, 100, 100, 100);
+  
+  initialize_button(buttons, button_properties, CLEAR_SCREEN_POS, 100, 100, 0, 200, grid);
+  initialize_button(buttons, button_properties, LEFT_BRACKET_POS, 100, 100, 100, 200, grid);
+  initialize_button(buttons, button_properties, RIGHT_BRACKET_POS, 100, 100, 200, 200 ,grid);
+  initialize_button(buttons, button_properties, MOD_POS, 100, 100, 300, 200, grid);
+  initialize_button(buttons, button_properties, PI_POS, 100, 100, 400, 200, grid);
+  initialize_button(buttons, button_properties, SEVEN_POS, 100, 100, 0, 300, grid);
+  initialize_button(buttons, button_properties, EIGHT_POS, 100, 100, 100, 300, grid);
+  initialize_button(buttons, button_properties, NINE_POS, 100, 100, 200, 300, grid);
+  initialize_button(buttons, button_properties, DIVIDE_POS, 100, 100, 300, 300, grid);
+  initialize_button(buttons, button_properties, ROOT_POS, 100, 100, 400, 300, grid);
+  initialize_button(buttons, button_properties, FOUR_POS, 100, 100, 0, 400, grid);
+  initialize_button(buttons, button_properties, FIVE_POS, 100, 100, 100, 400, grid);
+  initialize_button(buttons, button_properties, SIX_POS, 100, 100, 200, 400, grid);
+  initialize_button(buttons, button_properties, MULTIPLY_POS, 100, 100, 300, 400, grid);
+  initialize_button(buttons, button_properties, SQUARE_POS, 100, 100, 400, 400, grid);
+  initialize_button(buttons, button_properties, ONE_POS, 100, 100, 0, 500, grid);
+  initialize_button(buttons, button_properties, TWO_POS, 100, 100, 100, 500, grid);
+  initialize_button(buttons, button_properties, THREE_POS, 100, 100, 200, 500, grid);
+  initialize_button(buttons, button_properties, MINUS_POS, 100, 100, 300, 500, grid);
+  initialize_button(buttons, button_properties, ZERO_POS, 100, 100, 0, 600, grid);
+  initialize_button(buttons, button_properties, PEROID_POS, 100, 100, 100, 600, grid);
+  initialize_button(buttons, button_properties, PERCENT_POS, 100, 100, 200, 600, grid);
+  initialize_button(buttons, button_properties, PLUS_POS, 100, 100, 300, 600, grid);
+  initialize_button(buttons, button_properties, EQUALS_POS, 100, 200, 400, 500, grid);
 
   for (int i = 0; i < BUTTON_AMOUNT; ++i)
     g_signal_connect(window, "destroy", G_CALLBACK(on_window_closed), button_properties[i]);
