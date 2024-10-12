@@ -104,6 +104,10 @@ void activate(GtkApplication *app, gpointer user_data) {
   GtkWidget *buttons[BUTTON_AMOUNT];
   button_params *button_properties[BUTTON_AMOUNT];
 
+  GtkCssProvider *custom_css = gtk_css_provider_new();
+  gtk_css_provider_load_from_path(custom_css, "src/style.css");
+  gtk_style_context_add_provider_for_display(gdk_display_get_default(), GTK_STYLE_PROVIDER(custom_css), GTK_STYLE_PROVIDER_PRIORITY_USER);
+
   for (int i = 0; i < BUTTON_AMOUNT; ++i)
       button_properties[i] = g_new(button_params, 1);
 
@@ -134,6 +138,7 @@ void activate(GtkApplication *app, gpointer user_data) {
 
   window = gtk_application_window_new(app);
   gtk_window_set_title(GTK_WINDOW(window), "Calculator");
+  gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
   gtk_window_set_default_size(GTK_WINDOW(window), 500, 700);
 
   grid = gtk_grid_new();
@@ -143,6 +148,7 @@ void activate(GtkApplication *app, gpointer user_data) {
   label = gtk_label_new("");
   gtk_widget_set_size_request(label, 500, 200);
   gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 500, 200);
+  gtk_widget_add_css_class(label, "screen");
 
   for (int i = 0; i < BUTTON_AMOUNT; ++i)
       button_properties[i]->label = GTK_LABEL(label);
@@ -172,9 +178,10 @@ void activate(GtkApplication *app, gpointer user_data) {
   initialize_button(buttons, button_properties, PLUS_POS, 100, 100, 300, 600, grid);
   initialize_button(buttons, button_properties, EQUALS_POS, 100, 200, 400, 500, grid);
 
-  for (int i = 0; i < BUTTON_AMOUNT; ++i)
+  for (int i = 0; i < BUTTON_AMOUNT; ++i) {
     g_signal_connect(window, "destroy", G_CALLBACK(on_window_closed), button_properties[i]);
-  
+  }
+
   gtk_window_set_child(GTK_WINDOW(window), grid);
   gtk_window_present(GTK_WINDOW(window));
 }
