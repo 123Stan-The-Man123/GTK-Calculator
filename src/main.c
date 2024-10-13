@@ -1,5 +1,6 @@
 #include <gtk/gtk.h>
 #include <string.h>
+#include "calculator.h"
 
 #define BUTTON_AMOUNT 24
 #define CLEAR_SCREEN "AC"
@@ -78,11 +79,17 @@ int main(int argc, char **argv) {
 void print_string(GtkButton *button, gpointer data) {
   button_params *params = (button_params *) data;
   static char display_string[100] = {'\0'};
-  strcat(display_string, params->operation);
+
+  if (strcmp(params->operation, EQUALS) == 0) {
+      operator_precedence_parser(display_string);
+      return ;
+    }
+
+  strncat(display_string, params->operation, 100-strlen(display_string));
 
   if (strcmp(params->operation, CLEAR_SCREEN) == 0)
       *display_string = '\0';
-
+  
   gtk_label_set_text(params->label, display_string);
 }
 
