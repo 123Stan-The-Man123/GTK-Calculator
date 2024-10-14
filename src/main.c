@@ -7,17 +7,17 @@
 #define LEFT_BRACKET "("
 #define RIGHT_BRACKET ")"
 #define MOD "mod"
-#define PI "π"
+#define PI "pi"
 #define SEVEN "7"
 #define EIGHT "8"
 #define NINE "9"
-#define DIVIDE "÷"
-#define ROOT "√"
+#define DIVIDE "/"
+#define ROOT "sqrt"
 #define FOUR "4"
 #define FIVE "5"
 #define SIX "6"
-#define MULTIPLY "x"
-#define SQUARE "²"
+#define MULTIPLY "*"
+#define POWER "^"
 #define ONE "1"
 #define TWO "2"
 #define THREE "3"
@@ -43,7 +43,7 @@ enum positions {
   FIVE_POS,
   SIX_POS,
   MULTIPLY_POS,
-  SQUARE_POS,
+  POWER_POS,
   ONE_POS,
   TWO_POS,
   THREE_POS,
@@ -81,9 +81,10 @@ void print_string(GtkButton *button, gpointer data) {
   static char display_string[100] = {'\0'};
 
   if (strcmp(params->operation, EQUALS) == 0) {
-      operator_precedence_parser(display_string);
-      return ;
-    }
+    char rpn_expression[100];
+    strcpy(rpn_expression, operator_precedence_parser(display_string));
+    return ;
+  }
 
   strncat(display_string, params->operation, 100-strlen(display_string));
 
@@ -132,7 +133,7 @@ void activate(GtkApplication *app, gpointer user_data) {
   strcpy(button_properties[FIVE_POS]->operation, FIVE);
   strcpy(button_properties[SIX_POS]->operation, SIX);
   strcpy(button_properties[MULTIPLY_POS]->operation, MULTIPLY);
-  strcpy(button_properties[SQUARE_POS]->operation, SQUARE);
+  strcpy(button_properties[POWER_POS]->operation, POWER);
   strcpy(button_properties[ONE_POS]->operation, ONE);
   strcpy(button_properties[TWO_POS]->operation, TWO);
   strcpy(button_properties[THREE_POS]->operation, THREE);
@@ -174,7 +175,7 @@ void activate(GtkApplication *app, gpointer user_data) {
   initialize_button(buttons, button_properties, FIVE_POS, 100, 100, 100, 400, grid);
   initialize_button(buttons, button_properties, SIX_POS, 100, 100, 200, 400, grid);
   initialize_button(buttons, button_properties, MULTIPLY_POS, 100, 100, 300, 400, grid);
-  initialize_button(buttons, button_properties, SQUARE_POS, 100, 100, 400, 400, grid);
+  initialize_button(buttons, button_properties, POWER_POS, 100, 100, 400, 400, grid);
   initialize_button(buttons, button_properties, ONE_POS, 100, 100, 0, 500, grid);
   initialize_button(buttons, button_properties, TWO_POS, 100, 100, 100, 500, grid);
   initialize_button(buttons, button_properties, THREE_POS, 100, 100, 200, 500, grid);
