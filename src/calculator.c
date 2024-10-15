@@ -8,6 +8,7 @@
 #define QUEUE_SIZE 100
 #define STACK_SIZE 100
 #define OPERATOR_SIZE 5
+#define OPERATOR_AMOUNT 7
 
 typedef struct operator_info {
   char operator[OPERATOR_SIZE];
@@ -15,8 +16,7 @@ typedef struct operator_info {
   char associativity; //l = left, r = right
 } operator_info;
 
-
-operator_info operator_array[7];
+operator_info operator_array[OPERATOR_AMOUNT];
 
 typedef struct output_queue {
   char *queue[QUEUE_SIZE];
@@ -30,6 +30,7 @@ typedef struct operator_stack {
 } operator_stack;
 
 static void initialize_operators(int status);
+static operator_info find_operator(char *operator);
 static output_queue *initialize_queue(void);
 static void enqueue(output_queue *queue, char *string);
 static char *dequeue(output_queue *queue);
@@ -77,6 +78,12 @@ void initialize_operators(int status) {
   strcpy(operator_array[6].operator, "+");
   operator_array[6].precedence = 2;
   operator_array[6].associativity = 'l';
+}
+
+operator_info find_operator(char *operator) {
+  for (int i = 0; i < OPERATOR_AMOUNT; ++i)
+    if (strcmp(operator_array[i].operator, operator) == 0)
+      return operator_array[i];
 }
 
 output_queue *initialize_queue(void) {
@@ -184,10 +191,38 @@ char *operator_precedence_parser(char *string) {
         operator[1] = '\0';
       }
 
+      if (strcmp(operator, "(") == 0)
+        push(stack, operator);
+      
+      if (strcmp(operator, ")") == 0) {
+        char *temp_operator = pop(stack);
+
+        while (strcmp(temp_operator, "(") != 0 && strcmp(temp_operator, "empty stack") != 0) {
+          enqueue(operand_queue, temp_operator);
+          temp_operator = pop(stack);
+        }
+
+        if (strcmp(temp_operator, "empty stack") == 0)
+          return "Syntax error: missing bracket";
+      }
+
+      operator_info current_operator = find_operator(operator);
+      operator_info top_operator = find_operator(stack->stack[stack->top]);
+
+      while (stack->top >= 0 && strcmp(top_operator.operator, "(") != 0 && top_operator.precedence > current_operator.precedence || top_operator.precedence == current_operator.precedence && current_operator.associativity == 'l') {
+        enqueue(operand_queue, pop(stack));
+        top_operator = find_operator(stack->stack[stack->top]);
+      }
+
+      push(stack, current_operator.operator);
+
       push(stack, operator);
       is_operator = false;
     }
   }
+
+  while (stack->top >= 0)
+    enqueue(operand_queue, pop(stack));
 
   for (int i = 0; operand_queue->queue[i][0] != '\0'; ++i) {
     printf("%s\n", operand_queue->queue[i]);
