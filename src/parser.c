@@ -93,6 +93,13 @@ char *dequeue(queue *queue) {
     return queue->queue[queue->front++];
 }
 
+void free_queue(queue *queue) {
+    for (int i = 0; i < QUEUE_SIZE; ++i)
+        free(queue->queue[i]);
+    
+    free(queue);
+}
+
 char *operator_precedence_parser(char *string) {
     return string;
 }
