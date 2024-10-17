@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
 #include <string.h>
-#include "calculator.h"
+#include "parser.h"
 
 #define BUTTON_AMOUNT 24
 #define CLEAR_SCREEN "AC"
