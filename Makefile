@@ -2,7 +2,7 @@ CC = gcc
 PKG_CONFIG = pkg-config --cflags --libs gtk4
 CFLAGS = $(shell $(PKG_CONFIG))
 TARGET = bin/main
-SRC = src/main.c src/calculator.c
+SRC = src/main.c src/parser.c
 
 all: $(TARGET)
 
