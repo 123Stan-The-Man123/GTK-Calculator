@@ -6,8 +6,16 @@
 #include "parser.h"
 
 #define MAXLINE 100
+#define MAX_OPERATOR 4
+#define OPERATOR_COUNT 8
 #define STACK_SIZE 100
 #define QUEUE_SIZE 100
+
+typedef struct Operator_Info {
+  char operator[MAX_OPERATOR];
+  int precedence;
+  char associativity;
+} Operator_Info;
 
 typedef struct Stack {
   char *stack[STACK_SIZE];
@@ -20,6 +28,9 @@ typedef struct Queue {
   int back;
 } Queue;
 
+Operator_Info operators[OPERATOR_COUNT];
+static void initialize_operators(void);
+static Operator_Info find_operator(char *operator);
 static Stack *initialize_stack(void);
 static void push(Stack *stack, char *string);
 static char *pop(Stack *stack);
@@ -29,6 +40,54 @@ static Queue *initialize_queue(void);
 static void enqueue(Queue *queue, char *string);
 static char *dequeue(Queue *queue);
 static void free_queue(Queue *queue);
+
+void initialize_operators(void) {
+  // add
+  strcpy(operators[0].operator, "+");
+  operators[0].precedence = 2;
+  operators[0].associativity = 'l';
+
+  // subtract
+  strcpy(operators[1].operator, "-");
+  operators[1].precedence = 2;
+  operators[1].associativity = 'l';
+  
+  // multiply
+  strcpy(operators[2].operator, "*");
+  operators[2].precedence = 3;
+  operators[2].associativity = 'l';
+
+  // divide
+  strcpy(operators[3].operator, "/");
+  operators[3].precedence = 3;
+  operators[3].associativity = 'l';
+
+  // power
+  strcpy(operators[4].operator, "^");
+  operators[4].precedence = 4;
+  operators[4].associativity = 'r';
+
+  // square root
+  strcpy(operators[5].operator, "sqrt");
+  operators[5].precedence = 4;
+  operators[5].associativity = 'r';
+
+  // modulus
+  strcpy(operators[6].operator, "mod");
+  operators[6].precedence = 3;
+  operators[6].associativity = 'l';
+
+  // percent
+  strcpy(operators[7].operator, "%");
+  operators[7].precedence = 3;
+  operators[7].associativity = 'l';
+}
+
+Operator_Info find_operator(char *operator) {
+  for (int i = 0; i < OPERATOR_COUNT; ++i)
+    if (strcmp(operators[i].operator, operator) == 0)
+      return operators[i];
+}
 
 Stack *initialize_stack(void) {
   Stack *stack = malloc(sizeof(Stack));
@@ -107,8 +166,11 @@ void free_queue(Queue *queue) {
 }
 
 char *operator_precedence_parser(char *string) {
+  initialize_operators();
   Stack *operator_stack = initialize_stack();
   Queue *output_queue = initialize_queue(); 
+  Operator_Info current_operator;
+  Operator_Info top_operator;
   int index;
   char item_string[MAXLINE];
   bool is_operator = false;
@@ -153,10 +215,29 @@ char *operator_precedence_parser(char *string) {
     }
 
     else if (isalpha(*string)){
-      while (isalpha(*string))
+      while (isalpha(*string) && (strcmp(item_string, "mod") != 0 && strcmp(item_string, "pi") != 0 && strcmp(item_string, "sqrt") != 0))
         item_string[index++] = *string++;
   
       item_string[index] = '\0';
+
+      if (strcmp(item_string, "pi") == 0) {
+        enqueue(output_queue, item_string);
+        continue;
+      }
+      
+      if (peek(operator_stack) != NULL) {
+        current_operator = find_operator(item_string);
+        top_operator = find_operator(peek(operator_stack));
+
+        while (peek(operator_stack) != NULL && strcmp(top_operator.operator, "(") != 0 && (top_operator.precedence > current_operator.precedence || (top_operator.precedence == current_operator.precedence && current_operator.associativity == 'l'))) {
+          puts("test");
+          enqueue(output_queue, pop(operator_stack));
+
+          if (peek(operator_stack) != NULL)
+              top_operator = find_operator(peek(operator_stack));
+        }
+      }
+
       push(operator_stack, item_string);
 
       is_operator = false;
@@ -166,17 +247,49 @@ char *operator_precedence_parser(char *string) {
       item_string[index++] = *string++;
 
       item_string[index] = '\0';
-      push(operator_stack, item_string);
+
+      if (strcmp(item_string, "(") == 0) {
+        push(operator_stack, item_string);
+      }
+
+      else if (strcmp(item_string, ")") == 0) {
+        char *popped_operator = pop(operator_stack);
+
+        while (popped_operator != NULL && strcmp(popped_operator, "(") != 0) {
+          enqueue(output_queue, popped_operator);
+          popped_operator = pop(operator_stack);
+        }
+
+        if (popped_operator == NULL) {
+          free_stack(operator_stack);
+          free_queue(output_queue);
+          return "syntax error";
+        }
+      }
+
+      else {
+        if (peek(operator_stack) != NULL) {
+          current_operator = find_operator(item_string);
+          top_operator = find_operator(peek(operator_stack));
+
+          while (peek(operator_stack) != NULL && strcmp(top_operator.operator, "(") != 0 && (top_operator.precedence > current_operator.precedence || (top_operator.precedence == current_operator.precedence && current_operator.associativity == 'l'))) {
+            puts("test");
+            enqueue(output_queue, pop(operator_stack));
+
+            if (peek(operator_stack) != NULL)
+                top_operator = find_operator(peek(operator_stack));
+          }
+        }
+
+        push(operator_stack, item_string);
+      }
 
       is_operator = false;
     }
   } 
 
-  for (int i = 0; i < output_queue->back; ++i)
-      printf("%s\n", output_queue->queue[i]);
-
-  for (int i = 0; i < operator_stack->top + 1; ++i)
-      printf("%s\n", operator_stack->stack[i]);
+  while (peek(operator_stack) != NULL)
+      enqueue(output_queue, pop(operator_stack));
 
   free_stack(operator_stack);
   free_queue(output_queue);
