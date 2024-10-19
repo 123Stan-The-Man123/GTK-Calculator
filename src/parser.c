@@ -3,13 +3,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "calculator.h"
 #include "parser.h"
 
-#define MAXLINE 100
 #define MAX_OPERATOR 4
 #define OPERATOR_COUNT 8
-#define STACK_SIZE 100
-#define QUEUE_SIZE 100
 
 typedef struct Operator_Info {
   char operator[MAX_OPERATOR];
@@ -17,28 +15,12 @@ typedef struct Operator_Info {
   char associativity;
 } Operator_Info;
 
-typedef struct Stack {
-  char *stack[STACK_SIZE];
-  int top;
-} Stack;
-
-typedef struct Queue {
-  char *queue[QUEUE_SIZE];
-  int front;
-  int back;
-} Queue;
-
 Operator_Info operators[OPERATOR_COUNT];
+
 static void initialize_operators(void);
 static Operator_Info find_operator(char *operator);
-static Stack *initialize_stack(void);
-static void push(Stack *stack, char *string);
-static char *pop(Stack *stack);
-static char *peek(Stack *stack);
-static void free_stack(Stack *stack);
 static Queue *initialize_queue(void);
 static void enqueue(Queue *queue, char *string);
-static char *dequeue(Queue *queue);
 static void free_queue(Queue *queue);
 
 void initialize_operators(void) {
@@ -165,7 +147,7 @@ void free_queue(Queue *queue) {
   free(queue);
 }
 
-char *operator_precedence_parser(char *string) {
+char *operator_precedence_parser(char *string, char *result) {
   initialize_operators();
   Stack *operator_stack = initialize_stack();
   Queue *output_queue = initialize_queue(); 
@@ -222,6 +204,7 @@ char *operator_precedence_parser(char *string) {
 
       if (strcmp(item_string, "pi") == 0) {
         enqueue(output_queue, item_string);
+        is_operator = true;
         continue;
       }
       
@@ -230,7 +213,6 @@ char *operator_precedence_parser(char *string) {
         top_operator = find_operator(peek(operator_stack));
 
         while (peek(operator_stack) != NULL && strcmp(top_operator.operator, "(") != 0 && (top_operator.precedence > current_operator.precedence || (top_operator.precedence == current_operator.precedence && current_operator.associativity == 'l'))) {
-          puts("test");
           enqueue(output_queue, pop(operator_stack));
 
           if (peek(operator_stack) != NULL)
@@ -273,7 +255,6 @@ char *operator_precedence_parser(char *string) {
           top_operator = find_operator(peek(operator_stack));
 
           while (peek(operator_stack) != NULL && strcmp(top_operator.operator, "(") != 0 && (top_operator.precedence > current_operator.precedence || (top_operator.precedence == current_operator.precedence && current_operator.associativity == 'l'))) {
-            puts("test");
             enqueue(output_queue, pop(operator_stack));
 
             if (peek(operator_stack) != NULL)
@@ -291,7 +272,14 @@ char *operator_precedence_parser(char *string) {
   while (peek(operator_stack) != NULL)
       enqueue(output_queue, pop(operator_stack));
 
+  rpn_evaluator(output_queue, result);
+
+  /*char *item;
+  
+  while ((item = dequeue(output_queue)) != NULL)
+    strcat(result, item);*/
+
   free_stack(operator_stack);
   free_queue(output_queue);
-  return string;
+  return result;
 }

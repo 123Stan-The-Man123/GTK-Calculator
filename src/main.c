@@ -80,13 +80,16 @@ void print_string(GtkButton *button, gpointer data) {
   button_params *params = (button_params *) data;
   static char display_string[100] = {'\0'};
 
-  if (strcmp(params->operation, EQUALS) == 0) {
-    char rpn_expression[100];
-    strcpy(rpn_expression, operator_precedence_parser(display_string));
+  if (strcmp(params->operation, EQUALS) == 0 && *display_string != '\0') {
+    char result[100] = {'\0'};
+    operator_precedence_parser(display_string, result);
+    strcpy(display_string, result);
+    gtk_label_set_text(params->label, result);
     return ;
   }
 
-  strncat(display_string, params->operation, 100-strlen(display_string));
+  if (strcmp(params->operation, "=") != 0)
+    strncat(display_string, params->operation, 100-strlen(display_string));
 
   if (strcmp(params->operation, CLEAR_SCREEN) == 0)
       *display_string = '\0';
