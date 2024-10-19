@@ -116,7 +116,7 @@ void activate(GtkApplication *app, gpointer user_data) {
   button_params *button_properties[BUTTON_AMOUNT];
 
   GtkCssProvider *custom_css = gtk_css_provider_new();
-  gtk_css_provider_load_from_path(custom_css, "src/style.css");
+  gtk_css_provider_load_from_path(custom_css, "/home/stan/Coding/C/GTK-Calculator/src/style.css");
   gtk_style_context_add_provider_for_display(gdk_display_get_default(), GTK_STYLE_PROVIDER(custom_css), GTK_STYLE_PROVIDER_PRIORITY_USER);
 
   for (int i = 0; i < BUTTON_AMOUNT; ++i)

@@ -1,13 +1,10 @@
-#include <ctype.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <math.h>
 #include "calculator.h"
 
 #define PI "3.14159265358979323846"
 
 static void handle_operation(Stack *stack, char *item);
+static void trim_output(char *string);
 
 char *rpn_evaluator(Queue *queue, char *result) {
   Stack *stack = initialize_stack();
@@ -24,6 +21,7 @@ char *rpn_evaluator(Queue *queue, char *result) {
   
   strcpy(result, pop(stack));
   free_stack(stack);
+  trim_output(result);
   return result;
 }
 
@@ -180,4 +178,14 @@ void handle_operation(Stack *stack, char *operator) {
 
     return ;
   }
+}
+
+void trim_output(char *string) {
+  int index = strlen(string) - 1;
+
+  while (string[index] == '0')
+    string[index--] = '\0';
+
+  if (string[index] == '.')
+      string[index] = '\0';
 }

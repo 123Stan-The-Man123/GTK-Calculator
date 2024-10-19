@@ -1,3 +1,7 @@
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #define MAXLINE 100
 #define STACK_SIZE 100
 #define QUEUE_SIZE 100

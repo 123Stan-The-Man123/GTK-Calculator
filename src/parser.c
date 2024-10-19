@@ -1,8 +1,4 @@
 #include <stdbool.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include "calculator.h"
 #include "parser.h"
 

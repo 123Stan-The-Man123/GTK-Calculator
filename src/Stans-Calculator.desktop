@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Stan's Calculator
+Comment=Simple calculator written in C and GTK
+Exec=/home/stan/Coding/C/GTK-Calculator/bin/main
+Terminal=false
+Type=Application
+Categories=Utilities
