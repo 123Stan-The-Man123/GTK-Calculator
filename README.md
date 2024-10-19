@@ -11,4 +11,4 @@ This is a calculator I've written using C and the GTK-4 library. It takes an inf
 * gcc
 
 # Desktop File
-I have also added a desktop file here. You can paste it into ~/.local/share/applications/ if you want to select the app from your app selector.
+I have also added a desktop file in src. You can paste it into ~/.local/share/applications/ and change the path in the file to the path of the executable if you want to select the app from your app selector.
