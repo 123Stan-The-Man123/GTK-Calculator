@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Stan's Calculator
+Name=Stans Calculator
 Comment=Simple calculator written in C and GTK
 Exec=~/.local/share/GTK-Calculator/bin/main
 Terminal=false
