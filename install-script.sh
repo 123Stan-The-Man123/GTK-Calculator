@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DESKTOP_DIR="$HOME/.local/share/applications/"
+DESKTOP_DIR="$HOME/.local/share/applications/Stans-Calculator.Desktop"
 TARGET_DIR="$HOME/.local/share/GTK-Calculator"
 
 mkdir -p "$TARGET_DIR"
