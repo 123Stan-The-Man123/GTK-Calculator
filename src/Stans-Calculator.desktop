@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=Stans Calculator
+Name=Calculator
 Comment=Simple calculator written in C and GTK
-Exec=~/.local/share/GTK-Calculator/bin/main
+Exec=sh -c "exec ~/.local/share/GTK-Calculator/bin/main"
 Terminal=false
 Type=Application
 Categories=Utilities
