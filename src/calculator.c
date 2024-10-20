@@ -182,6 +182,18 @@ void handle_operation(Stack *stack, char *operator) {
 
 void trim_output(char *string) {
   int index = strlen(string) - 1;
+  bool is_float = false;
+
+  for (int i = 0; i < index + 1; ++i) {
+    printf("%c\n", string[i]);
+    if (string[i] == '.') {
+      is_float = true;
+      break;
+    }
+  }
+  
+  if (!is_float)
+      return ;
 
   while (string[index] == '0')
     string[index--] = '\0';

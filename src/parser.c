@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include "calculator.h"
 #include "parser.h"
 
