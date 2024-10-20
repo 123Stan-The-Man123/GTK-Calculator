@@ -185,7 +185,6 @@ void trim_output(char *string) {
   bool is_float = false;
 
   for (int i = 0; i < index + 1; ++i) {
-    printf("%c\n", string[i]);
     if (string[i] == '.') {
       is_float = true;
       break;
