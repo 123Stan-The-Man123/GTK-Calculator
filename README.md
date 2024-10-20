@@ -10,5 +10,8 @@ This is a calculator I've written using C and the GTK-4 library. It takes an inf
 * Make
 * gcc
 
+# Installation
+In the cloned directory, run ./install-script.sh and follow the instructions.
+
 # Desktop File
-I have also added a desktop file in src. You can paste it into ~/.local/share/applications/ and change the path in the file to the path of the executable if you want to select the app from your app selector.
+I have also added a desktop file in src. The install script will automatically place it in ~/.local/share/applications/ so that your application selector can see it. 
